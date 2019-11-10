@@ -1,0 +1,35 @@
+{
+  "name": "js-graph-ds",
+  "version": "1.0.0",
+  "description": "Graph implementation in JavaScript",
+  "main": "index.js",
+  "scripts": {
+    "test": "_mocha",
+    "coverage": "nyc --reporter html --reporter text npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kumar-gaurav-mishra/graph.git"
+  },
+  "keywords": [
+    "JavaScript",
+    "DataStructure",
+    "js-graph",
+    "graphs",
+    "js",
+    "ds",
+    "graph",
+    "graph algorithms"
+  ],
+  "author": "Kumar Gaurav Mishra",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kumar-gaurav-mishra/graph/issues"
+  },
+  "homepage": "https://github.com/kumar-gaurav-mishra/graph#readme",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^6.2.1",
+    "nyc": "^14.1.1"
+  }
+}
