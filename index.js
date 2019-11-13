@@ -37,12 +37,47 @@ class Graph {
     }
     return this;
   }
+  deapthFirstSearch(start, end) {
+    const results = [];
+    const visited = {};
+    let reachedEnd = false;
+    const dfs = vertex => {
+      if (!vertex || reachedEnd) return null;
+      visited[vertex] = true;
+      results.push(vertex);
+      if (vertex === end) {
+        reachedEnd = true;
+        return null;
+      }
+      this.adjacencyList[vertex].forEach(neighbor => {
+        if (!visited[neighbor]) return dfs(neighbor);
+      });
+    };
+    dfs(start);
+    return results;
+  }
+  breadthFirst(start, end) {
+    const results = [];
+    const visited = {};
+    const queue = [start];
+    visited[start] = true;
+    let currentVertex;
+    while (queue.length) {
+      currentVertex = queue.shift();
+      results.push(currentVertex);
+      if (currentVertex === end) break;
+      this.adjacencyList[currentVertex].forEach(neighbor => {
+        if (!visited[neighbor]) {
+          visited[neighbor] = true;
+          queue.push(neighbor);
+        }
+      });
+    }
+    return results;
+  }
 }
 let graph = new Graph();
-['kumar', 'jyoti', 'avichal'].forEach(val => graph.addVertex(val));
-graph.addEdge('kumar', 'avichal');
-graph.addEdge('kumar', 'jyoti');
-graph.addEdge('jyoti', 'avichal');
-graph.removeEdge('kumar', 'jyoti');
-console.log(graph.adjacencyList);
+['A', 'B', 'C', 'D', 'E', 'F'].forEach(val => graph.addVertex(val));
+[['A', 'B'], ['A', 'C'], ['B', 'D'], ['C', 'E'], ['D', 'E'], ['D', 'F'], ['E', 'F']].forEach(val => graph.addEdge(val[0], val[1]));
+console.log(graph.breadthFirst('A', 'E'));
 module.exports = Graph;
