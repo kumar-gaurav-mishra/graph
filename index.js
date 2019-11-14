@@ -1,83 +1,79 @@
-'use strict';
-class Graph {
+const Queue = require('priority-queue-ds');
+const Graph = require('./graph.js');
+class WeightedGraph {
   constructor() {
-    this.adjacencyList = [];
+    this.adjacencyList = {};
   }
   addVertex(vertex) {
     if (!vertex) return undefined;
     if (!this.adjacencyList[vertex]) this.adjacencyList[vertex] = [];
     return this;
   }
-  addEdge(vertex1, vertex2) {
-    if (!vertex1 || !vertex2) return undefined;
+  addEdge(vertex1, vertex2, weight) {
+    if (!vertex1 || !vertex2 || !weight) return undefined;
     if (this.adjacencyList[vertex1]) {
-      this.adjacencyList[vertex1].push(vertex2);
+      this.adjacencyList[vertex1].push({ node: vertex2, weight: weight });
     } else {
-      this.adjacencyList[vertex1] = [vertex2];
+      this.adjacencyList[vertex1] = [{ node: vertex2, weight: weight }];
     }
     if (this.adjacencyList[vertex2]) {
-      this.adjacencyList[vertex2].push(vertex1);
+      this.adjacencyList[vertex2].push({ node: vertex1, weight: weight });
     } else {
-      this.adjacencyList[vertex2] = [vertex1];
+      this.adjacencyList[vertex2] = [{ node: vertex1, weight: weight }];
     }
     return this;
   }
-  removeEdge(vertex1, vertex2) {
-    if (this.adjacencyList[vertex1]) this.adjacencyList[vertex1] = this.adjacencyList[vertex1].filter(v => v !== vertex2);
-    if (this.adjacencyList[vertex2]) this.adjacencyList[vertex2] = this.adjacencyList[vertex2].filter(v => v !== vertex1);
-    return this;
-  }
-  removeVertex(vertex) {
-    let arr = this.adjacencyList[vertex];
-    if (arr && arr.length >= 0) {
-      delete this.adjacencyList[vertex];
-      arr.forEach(val => {
-        this.adjacencyList[val] = this.adjacencyList[val].filter(v => v !== vertex);
-      });
-    }
-    return this;
-  }
-  deapthFirstSearch(start, end) {
-    const results = [];
-    const visited = {};
-    let reachedEnd = false;
-    const dfs = vertex => {
-      if (!vertex || reachedEnd) return null;
-      visited[vertex] = true;
-      results.push(vertex);
-      if (vertex === end) {
-        reachedEnd = true;
-        return null;
+  sortestPath(start, finish) {
+    const nodes = new Queue();
+    const distances = {};
+    const previous = {};
+    let smallest;
+    let path = [];
+    //Initial State
+    for (let vertex in this.adjacencyList) {
+      if (vertex === start) {
+        distances[vertex] = 0;
+        nodes.enqueue(vertex, 0);
+      } else {
+        distances[vertex] = Infinity;
+        nodes.enqueue(vertex, Infinity);
       }
-      this.adjacencyList[vertex].forEach(neighbor => {
-        if (!visited[neighbor]) return dfs(neighbor);
-      });
-    };
-    dfs(start);
-    return results;
-  }
-  breadthFirst(start, end) {
-    const results = [];
-    const visited = {};
-    const queue = [start];
-    visited[start] = true;
-    let currentVertex;
-    while (queue.length) {
-      currentVertex = queue.shift();
-      results.push(currentVertex);
-      if (currentVertex === end) break;
-      this.adjacencyList[currentVertex].forEach(neighbor => {
-        if (!visited[neighbor]) {
-          visited[neighbor] = true;
-          queue.push(neighbor);
-        }
-      });
+      previous[vertex] = null;
     }
-    return results;
+    //While there is something to visit
+    while (nodes.values.length) {
+      smallest = nodes.dequeue().value;
+      if (smallest === finish) {
+        while (previous[smallest]) {
+          path.push(smallest);
+          smallest = previous[smallest];
+        }
+        break;
+      }
+      if (smallest || distances[smallest] !== Infinity) {
+        for (let neighbour in this.adjacencyList[smallest]) {
+          let nextNode = this.adjacencyList[smallest][neighbour];
+          let candidate = distances[smallest] + nextNode.weight;
+          let nextNeighbour = nextNode.node;
+          if (candidate < distances[nextNeighbour]) {
+            //updateing new smallest distance to neighbour
+            distances[nextNeighbour] = candidate;
+            //updating previous - How we got to the neighbour
+            previous[nextNeighbour] = smallest;
+            // enque in the priority queue with new priority
+            nodes.enqueue(nextNeighbour, candidate);
+          }
+        }
+      }
+    }
+    return path.concat(smallest).reverse();
   }
 }
-let graph = new Graph();
+
+let graph = new WeightedGraph();
+
 ['A', 'B', 'C', 'D', 'E', 'F'].forEach(val => graph.addVertex(val));
-[['A', 'B'], ['A', 'C'], ['B', 'D'], ['C', 'E'], ['D', 'E'], ['D', 'F'], ['E', 'F']].forEach(val => graph.addEdge(val[0], val[1]));
-console.log(graph.breadthFirst('A', 'E'));
-module.exports = Graph;
+[['A', 'B', 4], ['A', 'C', 2], ['B', 'E', 3], ['C', 'D', 2], ['C', 'F', 4], ['D', 'E', 3], ['D', 'F', 1], ['E', 'F', 1]].forEach(val =>
+  graph.addEdge(val[0], val[1], val[2])
+);
+console.log(graph.sortestPath('A', 'E'));
