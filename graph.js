@@ -56,7 +56,7 @@ class Graph {
     dfs(start);
     return results;
   }
-  breadthFirst(start, end) {
+  breadthFirstSearch(start, end) {
     const results = [];
     const visited = {};
     const queue = [start];
@@ -76,8 +76,4 @@ class Graph {
     return results;
   }
 }
-let graph = new Graph();
-['A', 'B', 'C', 'D', 'E', 'F'].forEach(val => graph.addVertex(val));
-[['A', 'B'], ['A', 'C'], ['B', 'D'], ['C', 'E'], ['D', 'E'], ['D', 'F'], ['E', 'F']].forEach(val => graph.addEdge(val[0], val[1]));
-console.log(graph.breadthFirst('A'));
 module.exports = Graph;

@@ -69,11 +69,4 @@ class WeightedGraph {
     return path.concat(smallest).reverse();
   }
 }
-
-let graph = new WeightedGraph();
-
-['A', 'B', 'C', 'D', 'E', 'F'].forEach(val => graph.addVertex(val));
-[['A', 'B', 4], ['A', 'C', 2], ['B', 'E', 3], ['C', 'D', 2], ['C', 'F', 4], ['D', 'E', 3], ['D', 'F', 1], ['E', 'F', 1]].forEach(val =>
-  graph.addEdge(val[0], val[1], val[2])
-);
-console.log(graph.sortestPath('A', 'E'));
+module.exports = { Graph, WeightedGraph };
